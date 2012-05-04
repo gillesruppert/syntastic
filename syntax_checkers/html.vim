@@ -1,5 +1,5 @@
 "============================================================================
-"File:        ruby.vim
+"File:        html.vim
 "Description: Syntax checking plugin for syntastic.vim
 "Maintainer:  Martin Grenfell <martin.grenfell at gmail dot com>
 "License:     This program is free software. It comes without any warranty,
@@ -8,23 +8,22 @@
 "             Want To Public License, Version 2, as published by Sam Hocevar.
 "             See http://sam.zoy.org/wtfpl/COPYING for more details.
 "
-"Supports MRI and JRuby but loads the MRI syntax checker by default.
-"
-"Use the g:syntastic_ruby_checker option to specify which checker to load -
-"set it to "jruby" to load the jruby checker.
 "============================================================================
-if exists("loaded_ruby_syntax_checker")
+if exists("loaded_html_syntax_checker")
     finish
 endif
-let loaded_ruby_syntax_checker = 1
+let loaded_html_syntax_checker = 1
 
-"bail if the user doesnt have ruby installed
-if !executable("ruby")
-    finish
+if !exists('g:syntastic_html_checker')
+    let g:syntastic_html_checker = "tidy"
 endif
 
-if !exists("g:syntastic_ruby_checker")
-    let g:syntastic_ruby_checker = "mri"
+if g:syntastic_html_checker == "tidy"
+    if executable("tidy") && executable("grep")
+        runtime! syntax_checkers/html/tidy.vim
+    endif
+elseif g:syntastic_html_checker == "w3"
+    if executable("curl") && executable("sed")
+        runtime! syntax_checkers/html/w3.vim
+    endif
 endif
-exec "runtime! syntax_checkers/ruby/" . g:syntastic_ruby_checker . ".vim"
-
